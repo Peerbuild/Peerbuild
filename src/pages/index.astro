@@ -1,0 +1,33 @@
+---
+import EmailInput from "@/components/EmailInput";
+import "@/styles/globals.css";
+import "@fontsource-variable/manrope";
+import { Toaster } from "@/components/ui/sonner";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body
+    class="dark font-Manrope flex items-center flex-col justify-center bg-gradient-to-b from-black to-neutral-950 min-h-svh"
+  >
+    <Toaster client:idle position="bottom-center" />
+    <img src="/backdrop.svg" alt="backdrop" class="absolute h-svh -z-10" />
+    <img src="/logo.svg" alt="Logo" />
+
+    <h1
+      class="text-9xl bg-gradient-to-t from-white to-neutral-500 bg-clip-text text-transparent font-bold leading-normal"
+    >
+      Coming Soon
+    </h1>
+    <p class="text-muted-foreground text-3xl">
+      Work in progress, get notified when we are live.
+    </p>
+    <EmailInput client:load />
+  </body>
+</html>
