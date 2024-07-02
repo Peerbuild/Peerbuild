@@ -18,14 +18,16 @@ import { Toaster } from "@/components/ui/sonner";
   >
     <Toaster client:idle position="bottom-center" />
     <img src="/backdrop.svg" alt="backdrop" class="absolute h-svh -z-10" />
-    <img src="/logo.svg" alt="Logo" />
+    <img src="/logo.svg" alt="Logo" class="w-16 md:w-20" />
 
     <h1
-      class="text-9xl bg-gradient-to-t from-white to-neutral-500 bg-clip-text text-transparent font-bold leading-normal"
+      class="text-5xl md:text-8xl bg-gradient-to-t from-white to-neutral-500 bg-clip-text text-transparent font-bold leading-normal text-shadow-lg shadow-white/30 md:leading-relaxed lg:leading-normal"
     >
       Coming Soon
     </h1>
-    <p class="text-muted-foreground text-3xl">
+    <p
+      class="text-muted-foreground w-[17rem] md:w-auto text-center md:text-2xl"
+    >
       Work in progress, get notified when we are live.
     </p>
     <EmailInput client:load />

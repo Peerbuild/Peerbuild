@@ -37,20 +37,20 @@ const EmailInput = () => {
     setEmail("");
   };
   return (
-    <div className="bg-neutral-500/30 backdrop-blur-lg w-[32rem] mt-10 focus-within:ring-1 focus-within:ring-ring rounded-full pl-3 py-2 pr-2 flex items-center">
+    <div className="bg-neutral-500/30 backdrop-blur-lg w-3/4 md:w-[32rem] mt-10 focus-within:ring-1 focus-within:ring-ring rounded-full pl-2 md:pl-3 py-2 pr-2 flex items-center">
       <Input
         type="email"
-        placeholder="yourpersonal@gmail.com"
-        className="text-2xl "
+        placeholder="yourpersonal@email.com"
+        className=" md:text-xl "
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <Button
         onClick={handleEmailSubmission}
-        className="font-bold  rounded-full p-3 h-fit w-fit"
+        className="font-bold  md:text-2xl rounded-full p-3 h-fit w-fit"
         size={"icon"}
       >
-        <PiArrowRightBold size={28} />
+        <PiArrowRightBold />
       </Button>
     </div>
   );
