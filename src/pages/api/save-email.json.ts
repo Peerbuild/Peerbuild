@@ -1,4 +1,5 @@
 export const prerender = false;
+import { getFormattedDate } from "@/lib/utils";
 import type { APIRoute } from "astro";
 import { z } from "astro/zod";
 
@@ -18,33 +19,22 @@ export const POST: APIRoute = async ({ request }) => {
       { status: 400 }
     );
   }
+  const BUCKET_SLUG = "peerbuild-production";
   // Do something with the data, then return a success response
   try {
     const checkAlreadySubmittedResponse = await fetch(
-      "https://api.notion.com/v1/search",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          query: email,
-          filter: {
-            value: "page",
-            property: "object",
-          },
-        }),
-        headers: {
-          Authorization: "Bearer " + import.meta.env.NOTION_TOKEN,
-          "Notion-Version": "2022-06-28",
-          "Content-Type": "application/json",
-        },
-      }
+      `https://api.cosmicjs.com/v3/buckets/${BUCKET_SLUG}/objects?` +
+        new URLSearchParams({
+          query: JSON.stringify({
+            type: "emails",
+            $and: [{ title: email }],
+          }),
+          read_key: import.meta.env.READ_KEY,
+          props: "slug,title,metadata",
+        })
     );
-    const hasAlreadySubmitted = !!(
-      await checkAlreadySubmittedResponse.json()
-    ).results.find((result: any) => {
-      return result.properties.Name.title[0].plain_text === email;
-    });
 
-    if (hasAlreadySubmitted) {
+    if (checkAlreadySubmittedResponse.ok) {
       return new Response(
         JSON.stringify({
           message: "You have already subscribed",
@@ -53,36 +43,25 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const res = await fetch("https://api.notion.com/v1/pages", {
-      method: "POST",
-      body: JSON.stringify({
-        parent: {
-          database_id: "7486b7b307164596a8f98ca7243ef3ca",
-        },
-        icon: {
-          emoji: "✉️",
-        },
-        properties: {
-          Name: {
-            title: [
-              {
-                text: {
-                  content: result.data,
-                },
-              },
-            ],
+    const res = await fetch(
+      `https://api.cosmicjs.com/v3/buckets/${BUCKET_SLUG}/objects`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          title: email,
+          type: "emails",
+          metadata: {
+            submitted_at: getFormattedDate(),
           },
+        }),
+        headers: {
+          Authorization: "Bearer " + import.meta.env.WRITE_KEY,
+          "Content-Type": "application/json",
         },
-      }),
-      headers: {
-        Authorization: "Bearer " + import.meta.env.NOTION_TOKEN,
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json",
-      },
-    });
-    const { status, ...data } = await res.json();
+      }
+    );
     if (!res.ok) {
-      throw new Error(JSON.stringify(data));
+      throw new Error(JSON.stringify({ message: "Something went wrong!" }));
     }
   } catch (error: any) {
     return new Response(error.message, { status: 401 });
