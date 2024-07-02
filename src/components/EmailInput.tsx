@@ -20,13 +20,19 @@ const EmailInput = () => {
     });
     const data = await res.json();
     if (!res.ok) {
+      if (res.status === 401) {
+        toast.error("Something went wrong!", {
+          id: toastId,
+        });
+        return;
+      }
       if (data.message.issues) {
         toast.error(data.message.issues[0].message, {
           id: toastId,
         });
         return;
       }
-      toast.error("Something went wrong!", {
+      toast.error(data.message, {
         id: toastId,
       });
       return;

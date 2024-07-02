@@ -20,6 +20,39 @@ export const POST: APIRoute = async ({ request }) => {
   }
   // Do something with the data, then return a success response
   try {
+    const checkAlreadySubmittedResponse = await fetch(
+      "https://api.notion.com/v1/search",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          query: email,
+          filter: {
+            value: "page",
+            property: "object",
+          },
+        }),
+        headers: {
+          Authorization: "Bearer " + import.meta.env.NOTION_TOKEN,
+          "Notion-Version": "2022-06-28",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const hasAlreadySubmitted = !!(
+      await checkAlreadySubmittedResponse.json()
+    ).results.find((result: any) => {
+      return result.properties.Name.title[0].plain_text === email;
+    });
+
+    if (hasAlreadySubmitted) {
+      return new Response(
+        JSON.stringify({
+          message: "You have already subscribed",
+        }),
+        { status: 400 }
+      );
+    }
+
     const res = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
       body: JSON.stringify({
